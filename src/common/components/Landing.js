@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom';
-import { Routes } from './Routes';
 import { initialiseAccount, cancelAccountRefresh } from '../redux/accountActions';
+import {Routes} from './App';
 
 class Landing extends React.Component {
 
@@ -16,7 +16,7 @@ class Landing extends React.Component {
 
   render() {
     return (typeof web3 !== 'undefined') ?
-      <Redirect to={Routes.sampleServices} /> :
+      <Redirect to={Routes.services} /> :
       <Redirect to={Routes.providers} />;
   }
 }
