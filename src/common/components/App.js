@@ -10,6 +10,7 @@ export const Routes = {
   home: '/',
   providers: '/providers',
   services: '/services',
+  connectWallet: '/connectWallet',
 };
 
 export default class App extends React.Component {
