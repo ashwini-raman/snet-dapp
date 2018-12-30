@@ -5,8 +5,6 @@ import {Link} from 'react-router-dom';
 
 const styles = {
   tile: {
-    minWidth: '100px',
-    width: '33.3333%',
     padding: '0 15px',
   },
   stepGuideBox: {
