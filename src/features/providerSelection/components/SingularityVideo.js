@@ -1,7 +1,6 @@
 import React from 'react';
 import YouTube from 'react-youtube';
-import withStyles from "@material-ui/core/styles/withStyles";
-import {Grid} from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
 
 const styles = {
   container: {
@@ -25,13 +24,6 @@ const styles = {
     left: '0',
     width: '100%',
     height: '100%',
-  }
-};
-
-const opts = {
-  width: '100%',
-  playerVars: {
-    autoplay: 0
   }
 };
 

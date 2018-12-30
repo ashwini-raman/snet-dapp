@@ -2,15 +2,15 @@ import React from 'react';
 import './BrowserReset.css';
 import WalletConnectedLayout from './WalletConnectedLayout';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
-import Providers from '../../features/providerSelection/Providers';
+import Providers from '../../features/providerSelection/components/Providers';
 import LandingPage from './Landing';
-import Services from '../../features/sampleServices/Services';
+import Services from '../../features/sampleServices/components/Services';
 
 export const Routes = {
   home: '/',
   providers: '/providers',
+  connectWallet: '/providers/connectWallet',
   services: '/services',
-  connectWallet: '/connectWallet',
 };
 
 export default class App extends React.Component {

@@ -1,6 +1,6 @@
 import React from 'react';
-import upVoteImage from './images/thumbs-up.png';
-import downVoteImage from './images/thumbs-down.png';
+import upVoteImage from '../images/thumbs-up.png';
+import downVoteImage from '../images/thumbs-down.png';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 const styles = {

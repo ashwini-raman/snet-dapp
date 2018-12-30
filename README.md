@@ -34,6 +34,16 @@ The DApp can currently only interact with services that match the API of the exa
 * `npm run deploy`; the target S3 Bucket for the deployment and its region are specified as command line parameters in the package.json file npm script
 
 ### Additional commands
-## TODO:
+#### TODO:
 * `npm run build-analyze` shows the size of the application's bundle components; the original size, the parsed size (uglified + tree-shaken) and the gzipped size
 * `npm run serve-dist` serves the `dist` directory locally
+
+
+### Bugs:
+* When you click on Connect Wallet in the Providers page, 
+the tick mark on the connect wallet does not appear.
+* Do we really have to refresh an account's details every 500ms?
+* Theming has to be done as per Bootstrap (or as per the colours in the master branch)
+* Services page is not responsive.
+
+  
