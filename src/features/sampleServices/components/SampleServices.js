@@ -3,13 +3,21 @@ import {connect} from 'react-redux';
 import {withStyles} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/es/TableRow/TableRow';
-import TableCell from '@material-ui/core/es/TableCell/TableCell';
-import TableBody from '@material-ui/core/es/TableBody/TableBody';
+import TableRow from '@material-ui/core/TableRow/TableRow';
+import TableCell from '@material-ui/core/TableCell/TableCell';
+import TableBody from '@material-ui/core/TableBody/TableBody';
 import Button from '@material-ui/core/Button';
+import TablePagination from '@material-ui/core/TablePagination/TablePagination';
 import AgentHealth from './AgentHealth';
 import Votes from './Votes';
-import {cleanupServiceNetworkCalls, initialiseServiceData} from '../redux/serviceActions';
+import {
+  cleanupServiceNetworkCalls,
+  healthSortAction,
+  initialiseServiceData,
+  priceSortAction,
+  serviceNameSortAction
+} from '../redux/serviceActions';
+import toggle from '../../../common/images/Arrow.png';
 
 const styles = {
   tableContainer: {
@@ -27,9 +35,22 @@ const styles = {
     marginBottom: '10px',
     borderRadius: '6px',
   },
+  headerCell: {
+    border: '0',
+    fontSize: '16px',
+    color: 'black',
+  },
+  toggleButton: {
+    minWidth: '0',
+  },
   tableCell: {
     border: '0',
-  }
+    fontSize: '14px',
+    color: 'black',
+  },
+  pagination: {
+    color: 'black',
+  },
 };
 
 
@@ -46,32 +67,58 @@ const getVotes = (userVote, service) => {
   return <Votes votes={userVoteForService}/>;
 };
 
+const toggleButton = (classes, action) => (
+  <Button className={classes.toggleButton}>
+    <img src={toggle} alt="toggle" onClick={action}/>
+  </Button>
+);
+
 class SampleServices extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      page: 0,
+      rowsPerPage: 5,
+    };
+  }
 
   componentWillUnmount() {
     this.props.cleanupServiceNetworkCalls();
   }
+
   componentDidMount() {
     this.props.initialiseServiceData();
   }
 
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
   render() {
-    const { classes, userVotes, serviceStatus, services} = this.props;
+    const { classes, userVotes, serviceStatus, services,
+      serviceNameSortAction, priceSortAction, healthSortAction } = this.props;
+    const { page, rowsPerPage } = this.state;
     return (<div className={classes.tableContainer}>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell className={classes.tableCell}>Agent</TableCell>
-            <TableCell className={classes.tableCell}>Organization</TableCell>
-            <TableCell className={classes.tableCell}>Price</TableCell>
-            <TableCell className={classes.tableCell}>Tags</TableCell>
-            <TableCell className={classes.tableCell}>Health</TableCell>
-            <TableCell className={classes.tableCell}>Action</TableCell>
-            <TableCell className={classes.tableCell}/>
+            <TableCell className={classes.headerCell}>
+              Agent {toggleButton(classes, serviceNameSortAction)}
+            </TableCell>
+            <TableCell className={classes.headerCell}>Organization</TableCell>
+            <TableCell className={classes.headerCell}>
+              Price {toggleButton(classes, priceSortAction)}
+              </TableCell>
+            <TableCell className={classes.headerCell}>Tags</TableCell>
+            <TableCell className={classes.headerCell}>
+              Health {toggleButton(classes, healthSortAction)}
+            </TableCell>
+            <TableCell className={classes.headerCell}>Action</TableCell>
+            <TableCell className={classes.headerCell}/>
           </TableRow>
         </TableHead>
         <TableBody>
-          {services.map((service) =>
+          {services.slice(page * rowsPerPage, (page * rowsPerPage) + rowsPerPage).map((service) =>
             <TableRow key={service.service_id} className={classes.row}>
               <TableCell className={classes.tableCell}>{service.display_name}</TableCell>
               <TableCell className={classes.tableCell}>{service.organization_name}</TableCell>
@@ -88,6 +135,20 @@ class SampleServices extends React.Component {
           )}
         </TableBody>
       </Table>
+      <TablePagination className={classes.pagination}
+                       rowsPerPageOptions={[]}
+                       component="div"
+                       count={services.length}
+                       rowsPerPage={rowsPerPage}
+                       page={page}
+                       backIconButtonProps={{
+                         'aria-label': 'Previous Page',
+                       }}
+                       nextIconButtonProps={{
+                         'aria-label': 'Next Page',
+                       }}
+                       onChangePage={this.handleChangePage}
+      />
     </div>);
   }
 }
@@ -95,13 +156,17 @@ class SampleServices extends React.Component {
 const StyledSampleServices = withStyles(styles)(SampleServices);
 
 export default connect(
-  ({serviceData}) => ({
+  ({ serviceData }) => ({
     services: serviceData.services,
     serviceStatus: serviceData.serviceStatus,
     userVotes: serviceData.userVote,
+    offset: serviceData.offset,
   }),
   (dispatch) => ({
     initialiseServiceData: () => dispatch(initialiseServiceData),
-    cleanupServiceNetworkCalls: () => dispatch(cleanupServiceNetworkCalls)
+    cleanupServiceNetworkCalls: () => dispatch(cleanupServiceNetworkCalls),
+    serviceNameSortAction: () => dispatch(serviceNameSortAction()),
+    priceSortAction: () => dispatch(priceSortAction()),
+    healthSortAction: () => dispatch(healthSortAction()),
   })
 )(StyledSampleServices);
