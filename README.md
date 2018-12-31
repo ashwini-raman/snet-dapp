@@ -39,11 +39,16 @@ The DApp can currently only interact with services that match the API of the exa
 * `npm run serve-dist` serves the `dist` directory locally
 
 
-### Bugs:
+### Bugs and Other pending refactorings:
 * When you click on Connect Wallet in the Providers page, 
 the tick mark on the connect wallet does not appear.
-* Do we really have to refresh an account's details every 500ms?
+* Do we really have to refresh an account's details and watch the network every 500ms?
 * Theming has to be done as per Bootstrap (or as per the colours in the master branch)
 * Services page is not responsive.
+* Need to stop the timers in componentUnMount - Services and App.
+* Need to work with errors in all API calls. 
+* Move all API calls to an API layer.
+* The Request class is for now logging any errors received. What do you want to do with them?
+* Why is fetchVoteUrl a POST call?
 
   

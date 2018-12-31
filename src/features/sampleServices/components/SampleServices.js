@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import {withStyles} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
@@ -8,6 +9,7 @@ import TableBody from '@material-ui/core/es/TableBody/TableBody';
 import Button from '@material-ui/core/Button';
 import AgentHealth from './AgentHealth';
 import Votes from './Votes';
+import {cleanupServiceNetworkCalls, initialiseServiceData} from '../redux/serviceActions';
 
 const styles = {
   tableContainer: {
@@ -33,7 +35,7 @@ const styles = {
 
 const getServiceStatus = (serviceStatus, service) => {
   const serviceStatusForService = serviceStatus.find(element => element.service_id === service.service_id);
-  if(!serviceStatusForService) {
+  if (!serviceStatusForService) {
     return null;
   }
   return <AgentHealth healthy={serviceStatusForService.is_available === 1}/>;
@@ -45,35 +47,16 @@ const getVotes = (userVote, service) => {
 };
 
 class SampleServices extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      services: new Array(10).fill({
-        service_id: 1,
-        display_name: 'cntk-image-recon',
-        organization_name: 'snet',
-        price: '1.00000000',
-        tags: [],
-        service_name: 'cntk-service'
 
-      }),
-      serviceStatus: [{
-        service_id: 1,
-        is_available: 1,
-      }],
-      userVote: [{
-        service_name: 'cntk-service',
-        up_vote_count: 3,
-        down_vote_count: 1,
-      }]
-    };
+  componentWillUnmount() {
+    this.props.cleanupServiceNetworkCalls();
   }
-
   componentDidMount() {
+    this.props.initialiseServiceData();
   }
 
   render() {
-    const {classes} = this.props;
+    const { classes, userVotes, serviceStatus, services} = this.props;
     return (<div className={classes.tableContainer}>
       <Table className={classes.table}>
         <TableHead>
@@ -88,17 +71,19 @@ class SampleServices extends React.Component {
           </TableRow>
         </TableHead>
         <TableBody>
-          {this.state.services.map((service) =>
+          {services.map((service) =>
             <TableRow key={service.service_id} className={classes.row}>
               <TableCell className={classes.tableCell}>{service.display_name}</TableCell>
               <TableCell className={classes.tableCell}>{service.organization_name}</TableCell>
               <TableCell className={classes.tableCell}>{service.price} AGI</TableCell>
-              <TableCell className={classes.tableCell}>{service.tags && service.tags.map(tag => <Button>tag</Button>)}</TableCell>
+              <TableCell className={classes.tableCell}>{service.tags && service.tags.map(tag =>
+                <Button>tag</Button>)}</TableCell>
               <TableCell className={classes.tableCell}>
-                {getServiceStatus(this.state.serviceStatus, service)}
+                {getServiceStatus(serviceStatus, service)}
               </TableCell>
-              <TableCell className={classes.tableCell}><Button variant="contained" color="primary">Details</Button></TableCell>
-              <TableCell className={classes.tableCell}>{getVotes(this.state.userVote, service)}</TableCell>
+              <TableCell className={classes.tableCell}><Button variant="contained"
+                                                               color="primary">Details</Button></TableCell>
+              <TableCell className={classes.tableCell}>{getVotes(userVotes, service)}</TableCell>
             </TableRow>
           )}
         </TableBody>
@@ -107,4 +92,16 @@ class SampleServices extends React.Component {
   }
 }
 
-export default withStyles(styles)(SampleServices);
+const StyledSampleServices = withStyles(styles)(SampleServices);
+
+export default connect(
+  ({serviceData}) => ({
+    services: serviceData.services,
+    serviceStatus: serviceData.serviceStatus,
+    userVotes: serviceData.userVote,
+  }),
+  (dispatch) => ({
+    initialiseServiceData: () => dispatch(initialiseServiceData),
+    cleanupServiceNetworkCalls: () => dispatch(cleanupServiceNetworkCalls)
+  })
+)(StyledSampleServices);

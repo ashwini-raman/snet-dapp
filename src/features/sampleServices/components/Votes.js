@@ -9,6 +9,7 @@ const styles = {
   },
   upVoteDiv: {
     width: '40%',
+    marginRight: '10px',
   },
   downVoteDiv:{
     width: '40%',
@@ -29,13 +30,13 @@ const Votes = ({ classes, votes }) => (
     <div className={classes.upVoteDiv}>
       <img src={upVoteImage} alt="Up Vote"/>
       <div className={classes.upVoteCount}>
-        {votes.up_vote_count}
+        {(votes || {}).up_vote_count || 0}
       </div>
     </div>
     <div className={classes.downVoteDiv}>
       <img src={downVoteImage} alt="Down Vote"/>
       <div className={classes.downVoteCount}>
-        {votes.down_vote_count}
+        {(votes || {}).down_vote_count || 0}
       </div>
     </div>
   </div>
