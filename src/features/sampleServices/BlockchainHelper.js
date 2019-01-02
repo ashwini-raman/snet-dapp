@@ -8,8 +8,7 @@ import MPEAbi from 'singularitynet-platform-contracts/abi/MultiPartyEscrow.json'
 import MPENetworks from 'singularitynet-platform-contracts/networks/MultiPartyEscrow.json';
 import {AGI, NETWORKS} from '../../common/helper/util';
 
-export default class BlockchainHelper {
-
+class BlockchainHelper {
   constructor() {
     this.eth = undefined;
     this.web3 = undefined;
@@ -141,8 +140,9 @@ export default class BlockchainHelper {
 
   getMPEInstance(chainId) {
     if (chainId in MPENetworks) {
-      const contract = window.web3.eth.contract(MPEAbi);
-      return contract.at(MPENetworks[chainId].address);
+      const contract = new window.web3.eth.Contract(MPEAbi, MPENetworks[chainId].address);
+      console.log(contract);
+      return contract
     }
     return undefined;
   }
@@ -162,5 +162,6 @@ export default class BlockchainHelper {
   getDefaultNetwork() {
     return Object.keys(NETWORKS).find(key => NETWORKS[key].default || false);
   }
-
 }
+
+export default new BlockchainHelper();

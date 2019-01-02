@@ -18,6 +18,8 @@ import {
   serviceNameSortAction
 } from '../redux/serviceActions';
 import toggle from '../../../common/images/Arrow.png';
+import {OPEN_JOB_SLIDER} from '../features/jobSlider/redux/jobSliderActions';
+import JobSliderModal from '../features/jobSlider/JobSliderModal';
 
 const styles = {
   tableContainer: {
@@ -53,13 +55,12 @@ const styles = {
   },
 };
 
-
 const getServiceStatus = (serviceStatus, service) => {
   const serviceStatusForService = serviceStatus.find(element => element.service_id === service.service_id);
   if (!serviceStatusForService) {
     return null;
   }
-  return <AgentHealth healthy={serviceStatusForService.is_available === 1}/>;
+  return serviceStatusForService.is_available === 1;
 };
 
 const getVotes = (userVote, service) => {
@@ -95,61 +96,71 @@ class SampleServices extends React.Component {
   };
 
   render() {
-    const { classes, userVotes, serviceStatus, services,
-      serviceNameSortAction, priceSortAction, healthSortAction } = this.props;
+    const {
+      classes, userVotes, serviceStatus, services,
+      serviceNameSortAction, priceSortAction, healthSortAction, openJobSlider
+    } = this.props;
     const { page, rowsPerPage } = this.state;
-    return (<div className={classes.tableContainer}>
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow>
-            <TableCell className={classes.headerCell}>
-              Agent {toggleButton(classes, serviceNameSortAction)}
-            </TableCell>
-            <TableCell className={classes.headerCell}>Organization</TableCell>
-            <TableCell className={classes.headerCell}>
-              Price {toggleButton(classes, priceSortAction)}
-              </TableCell>
-            <TableCell className={classes.headerCell}>Tags</TableCell>
-            <TableCell className={classes.headerCell}>
-              Health {toggleButton(classes, healthSortAction)}
-            </TableCell>
-            <TableCell className={classes.headerCell}>Action</TableCell>
-            <TableCell className={classes.headerCell}/>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {services.slice(page * rowsPerPage, (page * rowsPerPage) + rowsPerPage).map((service) =>
-            <TableRow key={service.service_id} className={classes.row}>
-              <TableCell className={classes.tableCell}>{service.display_name}</TableCell>
-              <TableCell className={classes.tableCell}>{service.organization_name}</TableCell>
-              <TableCell className={classes.tableCell}>{service.price} AGI</TableCell>
-              <TableCell className={classes.tableCell}>{service.tags && service.tags.map(tag =>
-                <Button>tag</Button>)}</TableCell>
-              <TableCell className={classes.tableCell}>
-                {getServiceStatus(serviceStatus, service)}
-              </TableCell>
-              <TableCell className={classes.tableCell}><Button variant="contained"
-                                                               color="primary">Details</Button></TableCell>
-              <TableCell className={classes.tableCell}>{getVotes(userVotes, service)}</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      <TablePagination className={classes.pagination}
-                       rowsPerPageOptions={[]}
-                       component="div"
-                       count={services.length}
-                       rowsPerPage={rowsPerPage}
-                       page={page}
-                       backIconButtonProps={{
-                         'aria-label': 'Previous Page',
-                       }}
-                       nextIconButtonProps={{
-                         'aria-label': 'Next Page',
-                       }}
-                       onChangePage={this.handleChangePage}
-      />
-    </div>);
+    return (
+      <div>
+        <div className={classes.tableContainer}>
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.headerCell}>
+                  Agent {toggleButton(classes, serviceNameSortAction)}
+                </TableCell>
+                <TableCell className={classes.headerCell}>Organization</TableCell>
+                <TableCell className={classes.headerCell}>
+                  Price {toggleButton(classes, priceSortAction)}
+                </TableCell>
+                <TableCell className={classes.headerCell}>Tags</TableCell>
+                <TableCell className={classes.headerCell}>
+                  Health {toggleButton(classes, healthSortAction)}
+                </TableCell>
+                <TableCell className={classes.headerCell}>Action</TableCell>
+                <TableCell className={classes.headerCell}/>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {services.slice(page * rowsPerPage, (page * rowsPerPage) + rowsPerPage).map((service) =>
+                <TableRow key={service.service_id} className={classes.row}>
+                  <TableCell className={classes.tableCell}>{service.display_name}</TableCell>
+                  <TableCell className={classes.tableCell}>{service.organization_name}</TableCell>
+                  <TableCell className={classes.tableCell}>{service.price} AGI</TableCell>
+                  <TableCell className={classes.tableCell}>{service.tags && service.tags.map(tag =>
+                    <Button>tag</Button>)}</TableCell>
+                  <TableCell className={classes.tableCell}>
+                    <AgentHealth healthy={getServiceStatus(serviceStatus, service)}/>
+                  </TableCell>
+                  <TableCell className={classes.tableCell}>
+                    <Button variant="contained" color="primary"
+                            onClick={() => openJobSlider(service, getServiceStatus(serviceStatus, service))}>
+                      Details
+                    </Button></TableCell>
+                  <TableCell className={classes.tableCell}>{getVotes(userVotes, service)}</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <TablePagination className={classes.pagination}
+                           rowsPerPageOptions={[]}
+                           component="div"
+                           count={services.length}
+                           rowsPerPage={rowsPerPage}
+                           page={page}
+                           backIconButtonProps={{
+                             'aria-label': 'Previous Page',
+                           }}
+                           nextIconButtonProps={{
+                             'aria-label': 'Next Page',
+                           }}
+                           onChangePage={this.handleChangePage}
+          />
+        </div>
+        <JobSliderModal/>
+      </div>
+    );
   }
 }
 
@@ -168,5 +179,12 @@ export default connect(
     serviceNameSortAction: () => dispatch(serviceNameSortAction()),
     priceSortAction: () => dispatch(priceSortAction()),
     healthSortAction: () => dispatch(healthSortAction()),
+    openJobSlider: (service, healthy) => dispatch({
+      type: OPEN_JOB_SLIDER,
+      payload: {
+        service,
+        healthy,
+      }
+    })
   })
 )(StyledSampleServices);

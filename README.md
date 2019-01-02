@@ -41,7 +41,7 @@ The DApp can currently only interact with services that match the API of the exa
 
 ### Bugs and Other pending refactorings:
 * When you click on Connect Wallet in the Providers page, 
-the tick mark on the connect wallet does not appear.
+  the tick mark on the connect wallet does not appear.
 * Do we really have to refresh an account's details and watch the network every 500ms?
 * Theming has to be done as per Bootstrap (or as per the colours in the master branch)
 * Services page is not responsive.

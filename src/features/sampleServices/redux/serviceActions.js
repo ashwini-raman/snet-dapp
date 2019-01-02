@@ -1,4 +1,4 @@
-import BlockchainHelper from '../BlockchainHelper';
+import network from '../BlockchainHelper';
 import Request from '../../../common/helper/Request';
 
 export const UPDATE_CHAIN_ID_ACTION = 'Service/UPDATE_CHAIN_ID_ACTION';
@@ -31,13 +31,14 @@ export const healthSortAction = () => ({
   }
 });
 
-const network = new BlockchainHelper();
+
 let watchNetworkTimer = undefined;
 
 export const initialiseServiceData = async (dispatch, getState) => {
   const isInitialized = await network.initialize();
   try {
     if (isInitialized) {
+      //TODO: needs to be 500ms as if the network changes it has to be notified asap
       watchNetworkTimer = setInterval(() => watchNetwork(dispatch, getState), 5000);
     } else {
       const defaultChainID = network.getDefaultNetwork();
