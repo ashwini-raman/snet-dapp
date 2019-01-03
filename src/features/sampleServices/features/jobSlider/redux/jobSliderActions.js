@@ -54,19 +54,18 @@ const fetchServiceSpec = async (serviceData, selectedService) => {
 
 const getBalanceInformation = (dispatch, serviceData, selectedService) => {
   const mpeTokenInstance = network.getMPEInstance(serviceData.chainId);
-  mpeTokenInstance.balances(serviceData.userAddress, (err, balance) => {
-    balance = AGI.inAGI(balance);
-    console.log("In start job Balance is " + balance + " job cost is " + selectedService.price);
-    let foundChannel = channelHelper.findChannelWithBalance(selectedService, getCurrentBlockNumber());
-    //TODO: is this logic correct or should it be || !found?
-    if (typeof balance !== 'undefined' && balance === 0 && !foundChannel) {
-      console.log("open some modal");
-      //this.onOpenModalAlert();
-    } else if (foundChannel) {
-      dispatch(jobStartedAction(true, 1));
-    } else {
-      console.log("MPE has balance but no usable channel - Balance is " + balance + " job cost is " + selectedService.price);
-      dispatch(jobStartedAction(true, 0));
-    }
-  });
+  const ethBalance = await mpeTokenInstance.methods.balances(serviceData.userAddress);
+  const balance = AGI.inAGI(ethBalance);
+  console.log("In start job Balance is " + balance + " job cost is " + selectedService.price);
+  let foundChannel = channelHelper.findChannelWithBalance(selectedService, getCurrentBlockNumber());
+
+  if (typeof balance !== 'undefined' && balance === 0 && !foundChannel) {
+    //this.onOpenModalAlert();
+  } else if (foundChannel) {
+    dispatch(jobStartedAction(true, 1));
+  } else {
+    console.log("MPE has balance but no usable channel - Balance is " + balance + " job cost is " + selectedService.price);
+    dispatch(jobStartedAction(true, 0));
+  }
+
 };

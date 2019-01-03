@@ -95,7 +95,7 @@ const getUserVote = async (chainId) => {
   if (typeof window.web3 === 'undefined') {
     return;
   }
-  const userAddress = await window.web3.eth.coinbase;
+  const userAddress = await window.web3.eth.getCoinbase();
   const fetchVoteUrl = network.getMarketplaceURL(chainId) + 'fetch-vote';
   const userVote = await new Request(fetchVoteUrl).post({ user_address: userAddress }, CORS_HEADER);
   return {

@@ -9,6 +9,9 @@ export const UPDATE_BALANCE_ACTION = 'Common/UPDATE_BALANCE_ACTION';
 let watchWalletTimer = undefined;
 
 export const initialiseAccount = async (dispatch, getState) => {
+  if(window.web3) {
+    console.log(`web3 version found - ${window.web3.version.api}`);
+  }
   if (typeof window.ethereum !== 'undefined' || typeof window.web3 !== 'undefined') {
     try {
       window.web3 = new Web3(window.ethereum);
