@@ -12,6 +12,19 @@ const styles = {
     backgroundColor: '#fff',
     padding: '10px 10px',
     boxShadow: '1px 1px 10px #e0dbdb',
+    position: 'relative',
+    '&:before': {
+      content: '""',
+      transform: 'rotate(-135deg)',
+      left: '50%',
+      position: 'absolute',
+      top: '-9px',
+      border: 'solid #0066ff',
+      borderWidth: '0 2px 2px 0',
+      display: 'inline-block',
+      padding: '6px',
+      backgroundColor: 'white',
+    }
   },
   fundsTitle: {
     fontSize: '14px',
@@ -77,8 +90,8 @@ const FundTab = ({ classes, jobSliderData }) => (
           <TextField variant='outlined' className={classes.textField}/>
         </Grid>
       </Grid>
-      <Grid container className={classes.buttonContainer}>
-        <Grid item xs={12} alignItems='flex-end'>
+      <Grid container alignItems='flex-end' className={classes.buttonContainer}>
+        <Grid item xs={12} >
           <Button variant='contained' disabled={!jobSliderData.startJobFundInvokers}>Reserve Funds</Button>
         </Grid>
       </Grid>

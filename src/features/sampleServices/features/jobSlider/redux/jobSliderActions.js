@@ -1,6 +1,5 @@
 import channelHelper from '../../../ChannelHelper';
 import network from '../../../BlockchainHelper';
-import { Root } from 'protobufjs';
 import {AGI} from '../../../../../common/helper/util';
 
 export const OPEN_JOB_SLIDER = 'Slider/OPEN_JOB_SLIDER';

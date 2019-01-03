@@ -1,12 +1,13 @@
 import React from 'react';
 import {withStyles} from '@material-ui/core/styles/index';
+import {Button} from '@material-ui/core';
 
 const styles = {
   container: {
-    fontSize: '30px',
     textAlign: 'right',
   },
   closeButton: {
+    fontSize: '30px',
     textDecoration: 'none',
     color: '#0066ff',
   },
@@ -14,7 +15,7 @@ const styles = {
 
 const CloseButton = ({ classes, onClickAction }) => (
   <div className={classes.container}>
-    <a href="#" className={classes.closeButton} onClick={onClickAction}>&times;</a>
+    <Button className={classes.closeButton} onClick={onClickAction}>&times;</Button>
   </div>
 );
 
