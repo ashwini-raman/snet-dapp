@@ -10,13 +10,13 @@ class ChannelHelper {
     this.recipient = undefined;
   }
 
-  async reInitialize(channelInfoUrl, userAddress, serviceId, orgName) {
+  reInitialize(channelInfoUrl, userAddress, serviceId, orgName) {
     this.channels = undefined;
     this.groupId = undefined;
     this.endpoint = undefined;
     this.channelId = undefined;
     this.recipient = undefined;
-    await this.fetchChannels(channelInfoUrl, userAddress, serviceId, orgName);
+    return this.fetchChannels(channelInfoUrl, userAddress, serviceId, orgName);
   }
 
   getChannelId() {

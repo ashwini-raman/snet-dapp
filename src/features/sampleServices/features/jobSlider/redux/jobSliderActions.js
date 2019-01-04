@@ -35,26 +35,28 @@ export const startJob = async (dispatch, getState) => {
   await getBalanceInformation(dispatch, serviceData, selectedService);
 };
 
-const getCurrentBlockNumber = async () => {
+const getCurrentBlockNumberAndRefreshForLater = () => {
   let currentBlockNumber = 900000;
-  await window.web3.eth.getBlockNumber((error, result) => {
-    if (!error) {
+
+  window.web3.eth.getBlockNumber((error, result) => {
+    if(!error) {
       currentBlockNumber = result;
     }
   });
+
   return currentBlockNumber;
 };
 
-const reinitialiseJobState = async (serviceData, selectedService) => {
+const reinitialiseJobState = (serviceData, selectedService) => {
   const channelInfoUrl = network.getMarketplaceURL(serviceData.chainId) + 'channel-info';
-  await channelHelper.reInitialize(channelInfoUrl, serviceData.userAddress,
+  return channelHelper.reInitialize(channelInfoUrl, serviceData.userAddress,
     selectedService.service_id, selectedService.org_id);
 };
 
 const fetchServiceSpec = async (serviceData, selectedService) => {
-  let _urlservicebuf = network.getProtobufjsURL(serviceData.chainId)
-    + selectedService.org_id + "/" + selectedService.service_idfier;
-  const serviceSpec = await new Request(encodeURI(_urlservicebuf)).get();
+  let protocolBufferUrl = `${network.getProtobufjsURL(serviceData.chainId)}`+
+    `${selectedService.org_id}/${selectedService.service_idfier}`;
+  const serviceSpec = await new Request(encodeURI(protocolBufferUrl)).get();
   const serviceSpecJSON = Root.fromJSON(serviceSpec[0]);
   //TODO: set this in state as it is used elsewhere. need to know more about state to design it
 };
@@ -64,7 +66,8 @@ const getBalanceInformation = async (dispatch, serviceData, selectedService) => 
   mpeTokenInstance.methods.balances(serviceData.userAddress, (error, ethBalance) => {
     const balance = AGI.inAGI(ethBalance);
     console.log("In start job Balance is " + balance + " job cost is " + selectedService.price);
-    let foundChannel = channelHelper.findChannelWithBalance(selectedService, getCurrentBlockNumber());
+    let currentBlockNumber = getCurrentBlockNumberAndRefreshForLater();
+    let foundChannel = channelHelper.findChannelWithBalance(selectedService, currentBlockNumber);
 
     if (typeof balance !== 'undefined' && balance === 0 && !foundChannel) {
       //this.onOpenModalAlert();
