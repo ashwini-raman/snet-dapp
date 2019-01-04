@@ -52,13 +52,13 @@ export const initialiseServiceData = async (dispatch, getState) => {
 const setChainIdAndLoadDetails = async (dispatch, chainId) => {
   dispatch({ type: UPDATE_CHAIN_ID_ACTION, payload: { chainId: chainId } });
   console.log('Defaulting to ' + chainId);
-  const [agents, serviceStatus, { userVote, userAddress }] = await Promise.all([
-    getAgentDetails(chainId),
+  const [services, serviceStatus, { userVote, userAddress }] = await Promise.all([
+    getServiceDetails(chainId),
     getServiceStatus(chainId),
     getUserVote(chainId)]);
   dispatch({
     type: SERVICE_DATA_FETCHED_ACTION, payload: {
-      agents,
+      services,
       serviceStatus,
       userVote,
       userAddress,
@@ -81,7 +81,7 @@ const watchNetwork = async (dispatch, getState) => {
 };
 
 //TODO: do a healthsort on the agents data
-const getAgentDetails = async (chainId) => {
+const getServiceDetails = async (chainId) => {
   const serviceURL = network.getMarketplaceURL(chainId) + 'service';
   return await new Request(serviceURL).get();
 };
@@ -95,7 +95,7 @@ const getUserVote = async (chainId) => {
   if (typeof window.web3 === 'undefined') {
     return;
   }
-  const userAddress = await window.web3.eth.getCoinbase();
+  const userAddress = window.web3.eth.coinbase;
   const fetchVoteUrl = network.getMarketplaceURL(chainId) + 'fetch-vote';
   const userVote = await new Request(fetchVoteUrl).post({ user_address: userAddress }, CORS_HEADER);
   return {

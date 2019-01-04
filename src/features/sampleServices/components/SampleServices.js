@@ -18,7 +18,7 @@ import {
   serviceNameSortAction
 } from '../redux/serviceActions';
 import toggle from '../../../common/images/Arrow.png';
-import {OPEN_JOB_SLIDER} from '../features/jobSlider/redux/jobSliderActions';
+import {openJobSliderAction} from '../features/jobSlider/redux/jobSliderActions';
 import JobSliderModal from '../features/jobSlider/JobSliderModal';
 
 const styles = {
@@ -55,19 +55,6 @@ const styles = {
   },
 };
 
-const getServiceStatus = (serviceStatus, service) => {
-  const serviceStatusForService = serviceStatus.find(element => element.service_id === service.service_id);
-  if (!serviceStatusForService) {
-    return null;
-  }
-  return serviceStatusForService.is_available === 1;
-};
-
-const getVotes = (userVote, service) => {
-  const userVoteForService = userVote.find(element => (element.service_name === service.service_name));
-  return <Votes votes={userVoteForService}/>;
-};
-
 const toggleButton = (classes, action) => (
   <Button className={classes.toggleButton}>
     <img src={toggle} alt="toggle" onClick={action}/>
@@ -97,10 +84,16 @@ class SampleServices extends React.Component {
 
   render() {
     const {
-      classes, userVotes, serviceStatus, services,
-      serviceNameSortAction, priceSortAction, healthSortAction, openJobSlider
+      classes,
+      services,
+      serviceNameSortAction,
+      priceSortAction,
+      healthSortAction,
+      openJobSlider
     } = this.props;
+
     const { page, rowsPerPage } = this.state;
+
     return (
       <div>
         <div className={classes.tableContainer}>
@@ -131,14 +124,16 @@ class SampleServices extends React.Component {
                   <TableCell className={classes.tableCell}>{service.tags && service.tags.map(tag =>
                     <Button>tag</Button>)}</TableCell>
                   <TableCell className={classes.tableCell}>
-                    <AgentHealth healthy={getServiceStatus(serviceStatus, service)}/>
+                    <AgentHealth healthy={service.healthy}/>
                   </TableCell>
                   <TableCell className={classes.tableCell}>
                     <Button variant="contained" color="primary"
-                            onClick={() => openJobSlider(service, getServiceStatus(serviceStatus, service))}>
+                            onClick={() => openJobSlider(service)}>
                       Details
                     </Button></TableCell>
-                  <TableCell className={classes.tableCell}>{getVotes(userVotes, service)}</TableCell>
+                  <TableCell className={classes.tableCell}>
+                    <Votes votes={service.votes} />
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -169,8 +164,6 @@ const StyledSampleServices = withStyles(styles)(SampleServices);
 export default connect(
   ({ serviceData }) => ({
     services: serviceData.services,
-    serviceStatus: serviceData.serviceStatus,
-    userVotes: serviceData.userVote,
     offset: serviceData.offset,
   }),
   (dispatch) => ({
@@ -179,12 +172,6 @@ export default connect(
     serviceNameSortAction: () => dispatch(serviceNameSortAction()),
     priceSortAction: () => dispatch(priceSortAction()),
     healthSortAction: () => dispatch(healthSortAction()),
-    openJobSlider: (service, healthy) => dispatch({
-      type: OPEN_JOB_SLIDER,
-      payload: {
-        service,
-        healthy,
-      }
-    })
+    openJobSlider: (service) => dispatch(openJobSliderAction(service))
   })
 )(StyledSampleServices);

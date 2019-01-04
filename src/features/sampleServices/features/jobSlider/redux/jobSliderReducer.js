@@ -15,10 +15,9 @@ export default (state = initialState, action) => {
       return { ...state,
         jobDetailsSliderOpen: true,
         service: action.payload.service,
-        healthy: action.payload.healthy,
       };
     case CLOSE_JOB_SLIDER:
-      return { ...state, jobDetailsSliderOpen: false };
+      return { ...initialState };
     case JOB_STARTED:
       return { ...state,
         startJobFundInvokers: action.payload.startJobFundInvokers,

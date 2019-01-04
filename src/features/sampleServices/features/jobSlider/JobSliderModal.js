@@ -48,14 +48,17 @@ const ServiceName = ({classes, jobSliderData})  => (
     <Typography variant='subtitle1' color='primary'>
       {jobSliderData.service.service_name}
     </Typography>
-    <p> {jobSliderData.tags && jobSliderData.tags.map(rowtags =>
-      <button type="button">{rowtags}</button>)}</p>
+    <p>
+      {jobSliderData.service.tags && jobSliderData.service.tags.map(rowtags =>
+        <button type="button">{rowtags}</button>)
+      }
+    </p>
   </div>
 );
 
 const StartJobButton = ({classes, jobSliderData, startJob}) => (
   <div className={classes.startJobButtonContainer}>
-    {jobSliderData.healthy ?
+    {jobSliderData.service.healthy ?
       <Button variant='contained' color='primary' className={classes.button}
               onClick={startJob}>Start Job</Button> :
       <Button variant='contained' disabled>Start Job</Button>
@@ -71,7 +74,7 @@ const JobSliderModal = (props) => {
         <CloseButton onClickAction={closeJobSlider}/>
         <ServiceName {...props} />
         <StartJobButton {...props}/>
-        <ServiceDetailsTab/>
+        <ServiceDetailsTab />
       </div>
     </Slide>
   </Modal>)

@@ -7,13 +7,31 @@ import {
 
 const initialState = {
   services: [],
-  serviceStatus: [],
-  userVote: [],
   userAddress: undefined,
   chainId: undefined,
+  //TODO: where is this used?
   healthMerged: undefined,
   sortBy: undefined,
   sortAscending: true,
+};
+
+export const ServiceHealthStatus = {
+  UNHEALTHY: -1,
+  HEALTHY: 1,
+};
+
+const mergeServicesStatusAndVotes = (services, serviceStatus, userVote) => {
+  return services.map(service => {
+    const serviceStatusForService = serviceStatus
+      .find(element => element.service_id === service.service_id) || {is_available: ServiceHealthStatus.UNHEALTHY};
+    const userVoteForService = userVote
+      .find(element => (element.service_name === service.service_name)) || {up_vote_count: 0, down_vote_count: 0};
+    return {
+      ...service,
+      healthy: serviceStatusForService.is_available === ServiceHealthStatus.HEALTHY,
+      votes: userVoteForService
+    }
+  });
 };
 
 export default (state = initialState, action) => {
@@ -22,9 +40,10 @@ export default (state = initialState, action) => {
       return { ...state, chainId: action.payload.chainId };
     case SERVICE_DATA_FETCHED_ACTION:
       return {
-        ...state, services: action.payload.agents || [],
-        serviceStatus: action.payload.serviceStatus || [],
-        userVote: action.payload.userVote || [],
+        ...state,
+        services: mergeServicesStatusAndVotes(action.payload.services,
+          action.payload.serviceStatus,
+          action.payload.userVote),
         userAddress: action.payload.userAddress,
         healthMerged: action.payload.healthMerged,
       };
