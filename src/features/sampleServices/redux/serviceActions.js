@@ -1,5 +1,5 @@
 import network from '../BlockchainHelper';
-import Request from '../../../common/helper/Request';
+import Request, {CORS_HEADER} from '../../../common/helper/Request';
 
 export const UPDATE_CHAIN_ID_ACTION = 'Service/UPDATE_CHAIN_ID_ACTION';
 export const SERVICE_DATA_FETCHED_ACTION = 'Service/SERVICE_DATA_FETCHED_ACTION';
@@ -95,9 +95,9 @@ const getUserVote = async (chainId) => {
   if (typeof window.web3 === 'undefined') {
     return;
   }
-  const userAddress = await window.web3.eth.getCoinbase();
+  const userAddress = await window.web3.eth.coinbase;
   const fetchVoteUrl = network.getMarketplaceURL(chainId) + 'fetch-vote';
-  const userVote = await new Request(fetchVoteUrl).post({ user_address: userAddress });
+  const userVote = await new Request(fetchVoteUrl).post({ user_address: userAddress }, CORS_HEADER);
   return {
     userVote, userAddress,
   };

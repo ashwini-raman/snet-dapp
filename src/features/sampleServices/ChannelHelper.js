@@ -10,13 +10,13 @@ class ChannelHelper {
     this.recipient = undefined;
   }
 
-  reInitialize(channelInfoUrl, userAddress, serviceId, orgName) {
+  async reInitialize(channelInfoUrl, userAddress, serviceId, orgName) {
     this.channels = undefined;
     this.groupId = undefined;
     this.endpoint = undefined;
     this.channelId = undefined;
     this.recipient = undefined;
-    this.fetchChannels(channelInfoUrl, userAddress, serviceId, orgName);
+    await this.fetchChannels(channelInfoUrl, userAddress, serviceId, orgName);
   }
 
   getChannelId() {
@@ -78,8 +78,8 @@ class ChannelHelper {
     return channels
   }
 
-  fetchChannels(channelInfoUrl, userAddress, serviceId, orgName) {
-    const channelData = new Request(channelInfoUrl).post({
+  async fetchChannels(channelInfoUrl, userAddress, serviceId, orgName) {
+    const channelData = await new Request(channelInfoUrl).post({
       user_address: userAddress,
       service_id: serviceId,
       org_name: orgName

@@ -1,6 +1,9 @@
+export const CORS_HEADER = {
+  'Access-Control-Allow-Origin': '*',
+};
+
 class Request {
   static COMMON_HEADERS = {
-    'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
   };
 
@@ -22,10 +25,10 @@ class Request {
     }
   }
 
-  async post(body) {
+  async post(body, additionalHeaders) {
     try {
       const response = await fetch(this.url, {
-        headers: {...Request.COMMON_HEADERS},
+        headers: {...Request.COMMON_HEADERS, ...additionalHeaders},
         mode: 'cors',
         method: 'POST',
         body: JSON.stringify(body),

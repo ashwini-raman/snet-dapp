@@ -64,7 +64,7 @@ const getServiceStatus = (serviceStatus, service) => {
 };
 
 const getVotes = (userVote, service) => {
-  const userVoteForService = userVote.find(element => element.service_name === service.service_name);
+  const userVoteForService = userVote.find(element => (element.service_name === service.service_name));
   return <Votes votes={userVoteForService}/>;
 };
 

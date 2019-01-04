@@ -140,9 +140,8 @@ class BlockchainHelper {
 
   getMPEInstance(chainId) {
     if (chainId in MPENetworks) {
-      const contract = new window.web3.eth.Contract(MPEAbi, MPENetworks[chainId].address);
-      console.log(contract);
-      return contract
+      const contract = window.web3.eth.contract(MPEAbi);
+      return contract.at(MPENetworks[chainId].address);
     }
     return undefined;
   }
